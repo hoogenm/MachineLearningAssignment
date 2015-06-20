@@ -92,7 +92,8 @@ I decided to split the data into 75% to train the model and 25% to predict the o
 75% training data (instead of a lower value of 60% e.g.) because:
 
 1. the training set is not too small
-2. `caret` will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated) 3. I want the model trained more thoroughly to use it on the official `testing` set (that I have set aside).
+2. `caret` will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated)
+3. I want the model trained more thoroughly to use it on the official `testing` set (that I have set aside).
 
 I will use `set.seed` to make my work reproducible.
 

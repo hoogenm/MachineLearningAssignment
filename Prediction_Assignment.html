@@ -139,7 +139,8 @@ training2 &lt;- training2[, !columns_with_NA_only]</code></pre>
 <p>I decided to split the data into 75% to train the model and 25% to predict the out of sample error. I decided to use 75% training data (instead of a lower value of 60% e.g.) because:</p>
 <ol style="list-style-type: decimal">
 <li>the training set is not too small</li>
-<li><code>caret</code> will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated) 3. I want the model trained more thoroughly to use it on the official <code>testing</code> set (that I have set aside).</li>
+<li><code>caret</code> will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated)</li>
+<li>I want the model trained more thoroughly to use it on the official <code>testing</code> set (that I have set aside).</li>
 </ol>
 <p>I will use <code>set.seed</code> to make my work reproducible.</p>
 <pre class="r"><code>library(caret)
