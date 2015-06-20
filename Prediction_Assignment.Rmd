@@ -24,7 +24,7 @@ and a [test dataset](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-tes
 I created a model, used cross validation, calculated an expected out of sample error. In this write-up, I will also describe _how_ I built the model, and _why_ I made the choices that I did. I also used the model to predict the (20)
 test cases.
 
-Note: the document has between _approximately_ 1,430 words (counted from Word-version using OpenOffice) and 1,987 words (counted from a PDF-version by [this online tool](http://felix-cat.com/tools/wordcount/)).
+Note: the document has between _approximately_ 1,430 words (counted from Word-version using OpenOffice) and 1,525 words (counted from the HTML-version by [this online tool](http://felix-cat.com/tools/wordcount/)).
 
 # Getting and cleaning the data
 
