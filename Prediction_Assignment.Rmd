@@ -1,13 +1,14 @@
 ---
-title: |-
-  Prediction Assignment Writeup
-  (in ... words)
+title: "Prediction Assignment Writeup"
 author: "Marc van den Hoogen"
 date: "June 15th - June 20th, 2015"
-output: 
-  html_document: 
+output:
+  html_document:
+    number_sections: yes
     toc: yes
-    number_sections: true
+  pdf_document:
+    toc: yes
+  word_document: default
 pandoc_args:
 - +RTS
 - -K256m
@@ -22,6 +23,8 @@ For this, I downloaded a [training dataset](https://d396qusza40orc.cloudfront.ne
 and a [test dataset](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv).
 I created a model, used cross validation, calculated an expected out of sample error. In this write-up, I will also describe _how_ I built the model, and _why_ I made the choices that I did. I also used the model to predict the (20)
 test cases.
+
+Note: the document has between _approximately_ 1,430 words (counted from Word-version using OpenOffice) and 1,987 words (counted from a PDF-version by [this online tool](http://felix-cat.com/tools/wordcount/)).
 
 # Getting and cleaning the data
 
@@ -80,16 +83,18 @@ training2 <- training2[, !columns_with_NA_only]
 
 ## Initial choice of Machine Learning algorithm
 
-Because of *noise* in the sensor data, the authors of the paper (that was refered to in the assignment) chose for Random Forest. Our situation is not different. So I also choose for _Random Forest_, which is also known to have good prediction accuracy (compared to e.g. a single tree approach).
+Because of *noise* in the sensor data, the authors of the paper that was refered to in the assignment, chose for Random Forest. Our situation is not different. So I also choose for _Random Forest_, which is also known to have good prediction accuracy (compared to e.g. a single tree approach).
 When I made the decision to start with random forest, I thought I could always try another approach if needed. However we will see that RF did work very well and a revised strategy was unnecessary.
 
 ## Splitting the 'training' data
 
 I decided to split the data into 75% to train the model and 25% to predict the out of sample error. I decided to use
-75% training data (instead of a lower value of 60% e.g.) because the training set is not too small, because `caret` will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated), and
-because I want the model trained more thoroughly to use it on the official `testing` set that is set aside.
+75% training data (instead of a lower value of 60% e.g.) because:
 
-I will use the `set.seed` function to make my work reproducible.
+1. the training set is not too small
+2. `caret` will already use resampling internally (therefore I think the risk of overfitting the model is already mitigated) 3. I want the model trained more thoroughly to use it on the official `testing` set (that I have set aside).
+
+I will use `set.seed` to make my work reproducible.
 
 ```{r message=F}
 library(caret)
@@ -100,7 +105,7 @@ testingPart <- training2[-inTrainingPart,]
 ```
 
 ## Training the model
-Package `caret` provides a training function that can be used with Random Forest and also provides sensible defaults. The package also provides multicore/parallel processing (if a backend is registered), and because of the size of the
+Package `caret` provides a training function that can be used with Random Forest and also provides sensible defaults. The package also provides multicore/parallel processing, and because of the size of the
 dataset and the algorithm and defaults used, I will turn it on.
 
 ```{r cache=T,message=F}
@@ -137,8 +142,7 @@ According to the lectures, care should be taken to avoid overfitting with Random
 is important.
 
 At the end of the [video lecture on 'Random Forest'](https://class.coursera.org/predmachlearn-015/lecture/47) (week 3)
-though, Jeff Leek specifically states that the `train` function in `caret` *will handle that* for you. Breiman, one
-of the developers of Random Forest, explains in the (online) section ["The out-of-bag (oob) error estimate"](http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#ooberr) how the algorithm leaves a subset of cases out of each sample (about one-third), and how the model thus results in a unbiased estimate (proven in practice).
+though, Jeff Leek specifically states that the `train` function in `caret` *will handle that* for you. Breiman, a developer of Random Forest, explains in the (online) section ["The out-of-bag (oob) error estimate"](http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#ooberr) how the algorithm leaves a subset of cases out of each sample (about one-third), and how the model thus results in a unbiased estimate (proven in practice).
 
 We will still also _explicitly_ validate our model accuracy, with the 25% of 'training data' that we have set aside and left untouched.
 
@@ -178,7 +182,7 @@ predictions_on_pml_testing <- predict(model$finalModel, newdata=testing2)
 predictions_on_pml_testing
 ```
 
-To write out the final results to (individual) answer-files, I used the script that is suggested by the course assignment:
+To write out the final results to (individual) answer-files, I used the script suggested by the course assignment:
 
 ```{r}
 pml_write_files = function(x){
@@ -191,4 +195,4 @@ pml_write_files = function(x){
 pml_write_files(predictions_on_pml_testing)
 ```
 
-The creation of the answer files ends this writeup (and provides the files necessary for the 'submission' part of the assignment).
+The creation of the answer files finishes this writeup (and provides the files necessary for the 'submission' part of the assignment).
