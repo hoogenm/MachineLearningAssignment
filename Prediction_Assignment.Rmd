@@ -1,12 +1,11 @@
 ---
 title: "Prediction Assignment Writeup"
 author: "Marc van den Hoogen"
-date: "June 15th - June 20th, 2015"
+date: "June 15th - June 21th, 2015"
 output:
   html_document:
+    keep_md: yes
     number_sections: yes
-    toc: yes
-  pdf_document:
     toc: yes
   word_document: default
 pandoc_args:
@@ -24,7 +23,7 @@ and a [test dataset](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-tes
 I created a model, used cross validation, calculated an expected out of sample error. In this write-up, I will also describe _how_ I built the model, and _why_ I made the choices that I did. I also used the model to predict the (20)
 test cases.
 
-Note: the document has between _approximately_ 1,430 words (counted from Word-version using OpenOffice) and 1,525 words (counted from the HTML-version by [this online tool](http://felix-cat.com/tools/wordcount/)).
+Note: the document has between _approximately_ 1,435 words (counted from Word-version using OpenOffice) and 1,539 words (counted from the HTML-version by [this online tool](http://felix-cat.com/tools/wordcount/)).
 
 # Getting and cleaning the data
 
@@ -38,7 +37,8 @@ if (!file.exists('pml-training.csv')) {
                   destfile='pml-testing.csv', method='curl')
 }    
 ```
-* I then read the data with `read.csv`. The raw _training_ data will be in a data-frame variable called `testing` and raw testing data in `testing`. In numeric variables, the value `#DIV/0!` was present; this value was treated
+* I then read the data with `read.csv`. The raw _training_ data will be in a data-frame variable called `training`
+and raw testing data in `testing`. In numeric variables, the value `#DIV/0!` was present; this value was treated
 as `NA` (otherwise the numeric variables cannot be treated as numeric).
 ```{r}
 training <- read.csv('pml-training.csv', na.strings=c("NA", "#DIV/0!"))
@@ -62,7 +62,7 @@ training2 <- select(training2, -contains('new_window'))
 
 ## Variables that may identify specific cases
 The variables `X` and `user_name` do not contain any actual measurement of **how** a participant performed an exercise,
-but may (help to) indentify measurements, which may lead to overfitting if included. So I decided to drop those
+but may (help to) identify measurements, which may lead to overfitting if included. So I decided to drop those
 variables.
 ```{r}
 training2$X <- NULL
@@ -83,8 +83,9 @@ training2 <- training2[, !columns_with_NA_only]
 
 ## Initial choice of Machine Learning algorithm
 
-Because of *noise* in the sensor data, the authors of the paper that was refered to in the assignment, chose for Random Forest. Our situation is not different. So I also choose for _Random Forest_, which is also known to have good prediction accuracy (compared to e.g. a single tree approach).
-When I made the decision to start with random forest, I thought I could always try another approach if needed. However we will see that RF did work very well and a revised strategy was unnecessary.
+Because of *noise* in the sensor data, the authors of the paper that was referred to in the assignment, chose for Random Forest. Our situation is not different. So I also choose for _Random Forest_, which is also known to have good prediction accuracy (compared to e.g. a single tree approach).
+When I made the decision to start with random forest, I thought I could always try another approach if needed.
+However, we will see that RF did work very well and a revised strategy was unnecessary.
 
 ## Splitting the 'training' data
 
@@ -164,7 +165,8 @@ The Kappa statistic value (based on the 'hold out' dataset), is `r round(confMat
 
 # Predictions for the official (downloaded) test set
 
-First, we will apply the same preprocessing to the dataset, which in this case consists mainly of removing columns (given the dataset and the use of Random Forest, no scaling or normalizing was needed). Then we will apply `predict()` on the model and the _newdata_. The result will be used for the 
+First, we will apply the same preprocessing to the dataset, which in this case consists mainly of removing columns (given the dataset and the use of Random Forest, no scaling or normalizing was needed). Then we will apply `predict()` on the model and the _newdata_. The result will be used for the second part of the assignment: the submission
+of the predictions on the 20 test cases.
 
 ```{r}
 testing2 <- select(testing, -contains('timestamp'))

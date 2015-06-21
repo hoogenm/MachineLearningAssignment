@@ -63,7 +63,7 @@ img {
 <div id="header">
 <h1 class="title">Prediction Assignment Writeup</h1>
 <h4 class="author"><em>Marc van den Hoogen</em></h4>
-<h4 class="date"><em>June 15th - June 20th, 2015</em></h4>
+<h4 class="date"><em>June 15th - June 21th, 2015</em></h4>
 </div>
 
 <div id="TOC">
@@ -89,7 +89,7 @@ img {
 <div id="introduction-summary" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction / summary</h1>
 <p>The goal of the ‘prediction assignment’ is to predict the manner in which (six) participants did a weight lifting exercise. For this, I downloaded a <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv">training dataset</a> and a <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv">test dataset</a>. I created a model, used cross validation, calculated an expected out of sample error. In this write-up, I will also describe <em>how</em> I built the model, and <em>why</em> I made the choices that I did. I also used the model to predict the (20) test cases.</p>
-<p>Note: the document has between <em>approximately</em> 1,430 words (counted from Word-version using OpenOffice) and 1,525 words (counted from the HTML-version by <a href="http://felix-cat.com/tools/wordcount/">this online tool</a>).</p>
+<p>Note: the document has between <em>approximately</em> 1,435 words (counted from Word-version using OpenOffice) and 1,539 words (counted from the HTML-version by <a href="http://felix-cat.com/tools/wordcount/">this online tool</a>).</p>
 </div>
 <div id="getting-and-cleaning-the-data" class="section level1">
 <h1><span class="header-section-number">2</span> Getting and cleaning the data</h1>
@@ -97,7 +97,7 @@ img {
 <h2><span class="header-section-number">2.1</span> Getting the data</h2>
 <ul>
 <li><p>First, I download the test data and the training data. The R code is available in the repository (in the compiled version, some code will be suppressed by <code>echo=F</code>).</p></li>
-<li><p>I then read the data with <code>read.csv</code>. The raw <em>training</em> data will be in a data-frame variable called <code>testing</code> and raw testing data in <code>testing</code>. In numeric variables, the value <code>#DIV/0!</code> was present; this value was treated as <code>NA</code> (otherwise the numeric variables cannot be treated as numeric).</p></li>
+<li><p>I then read the data with <code>read.csv</code>. The raw <em>training</em> data will be in a data-frame variable called <code>training</code> and raw testing data in <code>testing</code>. In numeric variables, the value <code>#DIV/0!</code> was present; this value was treated as <code>NA</code> (otherwise the numeric variables cannot be treated as numeric).</p></li>
 </ul>
 <pre class="r"><code>training &lt;- read.csv('pml-training.csv', na.strings=c(&quot;NA&quot;, &quot;#DIV/0!&quot;))
 testing &lt;- read.csv('pml-testing.csv', na.strings=c(&quot;NA&quot;, &quot;#DIV/0!&quot;))</code></pre>
@@ -116,7 +116,7 @@ training2 &lt;- select(training2, -contains('new_window'))</code></pre>
 </div>
 <div id="variables-that-may-identify-specific-cases" class="section level2">
 <h2><span class="header-section-number">2.4</span> Variables that may identify specific cases</h2>
-<p>The variables <code>X</code> and <code>user_name</code> do not contain any actual measurement of <strong>how</strong> a participant performed an exercise, but may (help to) indentify measurements, which may lead to overfitting if included. So I decided to drop those variables.</p>
+<p>The variables <code>X</code> and <code>user_name</code> do not contain any actual measurement of <strong>how</strong> a participant performed an exercise, but may (help to) identify measurements, which may lead to overfitting if included. So I decided to drop those variables.</p>
 <pre class="r"><code>training2$X &lt;- NULL
 training2$user_name &lt;- NULL</code></pre>
 </div>
@@ -132,7 +132,7 @@ training2 &lt;- training2[, !columns_with_NA_only]</code></pre>
 <h1><span class="header-section-number">3</span> Building and evaluating the model</h1>
 <div id="initial-choice-of-machine-learning-algorithm" class="section level2">
 <h2><span class="header-section-number">3.1</span> Initial choice of Machine Learning algorithm</h2>
-<p>Because of <em>noise</em> in the sensor data, the authors of the paper that was refered to in the assignment, chose for Random Forest. Our situation is not different. So I also choose for <em>Random Forest</em>, which is also known to have good prediction accuracy (compared to e.g. a single tree approach). When I made the decision to start with random forest, I thought I could always try another approach if needed. However we will see that RF did work very well and a revised strategy was unnecessary.</p>
+<p>Because of <em>noise</em> in the sensor data, the authors of the paper that was referred to in the assignment, chose for Random Forest. Our situation is not different. So I also choose for <em>Random Forest</em>, which is also known to have good prediction accuracy (compared to e.g. a single tree approach). When I made the decision to start with random forest, I thought I could always try another approach if needed. However, we will see that RF did work very well and a revised strategy was unnecessary.</p>
 </div>
 <div id="splitting-the-training-data" class="section level2">
 <h2><span class="header-section-number">3.2</span> Splitting the ‘training’ data</h2>
@@ -166,7 +166,7 @@ accuracy.of.best.model &lt;- model$results$Accuracy[as.integer(row.names(model$b
 errorRate.OOB.Reported &lt;- model$finalModel$err.rate[model$finalModel$ntree,1]</code></pre>
 <p>Results:</p>
 <ul>
-<li>The accuracy of the chosen model as reported by the algorithm is 0.995508</li>
+<li>The accuracy of the chosen model as reported by the algorithm is 0.995502</li>
 <li>The OOB (out of bag) error rate as reported is 0.002151.</li>
 </ul>
 <p>Based on the ‘high’ indication for accuracy and the ‘low’ indication for OOB error rate, I decided to use this model to go to the next step, and calculate an expected <em>out of sample error rate</em> using the 25% data we set aside (see below).</p>
@@ -221,7 +221,7 @@ confMatrix</code></pre>
 </div>
 <div id="predictions-for-the-official-downloaded-test-set" class="section level1">
 <h1><span class="header-section-number">4</span> Predictions for the official (downloaded) test set</h1>
-<p>First, we will apply the same preprocessing to the dataset, which in this case consists mainly of removing columns (given the dataset and the use of Random Forest, no scaling or normalizing was needed). Then we will apply <code>predict()</code> on the model and the <em>newdata</em>. The result will be used for the</p>
+<p>First, we will apply the same preprocessing to the dataset, which in this case consists mainly of removing columns (given the dataset and the use of Random Forest, no scaling or normalizing was needed). Then we will apply <code>predict()</code> on the model and the <em>newdata</em>. The result will be used for the second part of the assignment: the submission of the predictions on the 20 test cases.</p>
 <pre class="r"><code>testing2 &lt;- select(testing, -contains('timestamp'))
 # We already checked that dataset 'testing' has only rows with new_window == no,
 # we will remove the column however
